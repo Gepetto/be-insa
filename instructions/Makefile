@@ -1,14 +1,16 @@
 SOURCES = \
-	exercise-1.asciidoc \
-	exercise-2.asciidoc \
-	exercise-3.asciidoc
+	exercise-1 \
+	exercise-2 \
+	exercise-3 \
+	exercise-4
 
-HTML_FILES=$(SOURCES:%.asciidoc=%.html)
+SOURCES_ASCIIDOC=$(SOURCES:%=%.asciidoc)
+HTML_FILES=$(SOURCES_ASCIIDOC:%.asciidoc=%.html)
 
 all: $(HTML_FILES)
 
 %.html: %.asciidoc
-	asciidoc --filter latex -a toc -a icons -o $@ $<
+	asciidoctor -b html -o $@ $<
 
 clean:
 	rm -f $(HTML_FILES)

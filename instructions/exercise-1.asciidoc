@@ -47,8 +47,7 @@ array([0., 0., 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
 This vector represents the configuration of the robot as displayed in the viewer.
 
 * The 3 first values represent the translation of the waist,
-* the 4 following values represent the orientation of the waist as a Quaternion: xi + yj + zk + w,
- in this exercise and the following ones, this orientation will remain the identity.
+* the 4 following values represent the orientation of the waist as a Quaternion: xi + yj + zk + w.
 * the following values represent each joint angle. A dictionary in the variable `robot` maps
 joint names with their index in the configuration vector.
 

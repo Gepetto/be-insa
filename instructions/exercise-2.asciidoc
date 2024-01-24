@@ -16,7 +16,7 @@ and solvers. In those example, the solvers take as input
 * a cost function +cost+,
 * an initial guess +x0+ (initial value of the optimization variable),
 * a callback function, instance of +CallbackLogger+,
-* possible some inequality of equality constraints
+* possibly some inequality or equality constraints
 
 and computes a value of the optimization variable that minimizes the cost
 function under the constraints.

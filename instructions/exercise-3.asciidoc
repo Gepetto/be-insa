@@ -9,8 +9,9 @@ Exercise 3
 ----------
 
 The input of the walk motion is
+
 * an initial configuration of the robot standing on its two feet,
-* a sequence points in the horizontal plane corresponding to steps
+* a sequence of points in the horizontal plane corresponding to steps
 
 The successive steps of the computation are
 

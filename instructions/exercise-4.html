@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.16">
-<title>Walk motion</title>
+<title>Computing the sequence of steps</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
 /*! Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -439,157 +439,92 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </head>
 <body class="article">
 <div id="header">
-<h1>Walk motion</h1>
+<h1>Computing the sequence of steps</h1>
 </div>
 <div id="content">
 <div class="sect1">
 <h2 id="_objective">Objective</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Compute a walk motion for the biped robot.</p>
+<p>Automatically compute the sequence of steps to reach a given configuration.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_exercise_3">Exercise 3</h2>
+<h2 id="_exercise_4">Exercise 4</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The input of the walk motion is</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>an initial configuration of the robot standing on its two feet,</p>
-</li>
-<li>
-<p>a sequence of points in the horizontal plane corresponding to steps</p>
-</li>
-</ul>
+<p>The input of the walk motion is now a desired pose of the feet and position of the center of mass defined by a point and an orientation: \((x_{2n},y_{2N},\theta_{2N})\) in the figure.</p>
 </div>
 <div class="paragraph">
-<p>The successive steps of the computation are</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>the computation of a desired CoP trajectory,</p>
-</li>
-<li>
-<p>the computation of a center of mass trajectory that minimizes the integral of the CoP error,</p>
-</li>
-<li>
-<p>the computation of the foot trajectory,</p>
-</li>
-<li>
-<p>the computation of a whole-body motion of the robot by inverse kinematics.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The plots below give an idea of the expected results of some of the above steps.</p>
+<p>To compute the sequence of steps, we are going to define a sliding motion of the robot in the plane as a Bézier curve \(B\) in \(\mathbb{R}^3\), then we are going to discretize this sliding motion into a sequence of \(2N\) times \(t_i\), \(i\leq 2N\).</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="figures/walk-plots.png" alt="walk trajectories" width="100%">
+<img src="figures/steps.png" alt="steps" width="sequence of steps"">
 </div>
 </div>
-<div class="sect2">
-<h3 id="_computation_of_a_desired_trajectory_of_the_center_of_pressure">Computation of a desired trajectory of the center of pressure</h3>
 <div class="paragraph">
-<p>In file <code>script/cop_des.py</code>, method <code>CoPDes.__init__</code>, define the desired trajectory of the center
-of pressure by appending affine functions in <code>self.segments</code>. The CoP trajectory should</p>
+<p>The sequence of steps to compute is then represented by a sequence:</p>
+</div>
+<div class="stemblock">
+<div class="content">
+\[\mathbf{x}_i= (x_i,y_i,\theta_i) = B(t_i)\]
+</div>
+</div>
+<div class="paragraph">
+<p>for \(i\) between \(1\) and \(2N\). \(i=0\) corresponds to the initial pose of the feet and \(2N\) to the final pose.</p>
+</div>
+<div class="paragraph">
+<p>From sequence \(\mathbf{x}_i\), we extract the sequence of steps as follows:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>start from <code>start</code> input position,</p>
+<p>\(\mathbf{s}_0 = \mbox{rightFootPose}(\mathbf{x}_0)\)</p>
 </li>
 <li>
-<p>move to <code>steps[0]</code> in time <code>self.double_support_time</code>,</p>
+<p>for \(i\) such that \(1 \leq i \leq N\), \(\begin{eqnarray*}\mathbf{s}_{2i-1} &amp;=&amp; \mbox{leftFootPose}(\mathbf{x}_{2i-1})\\ \mathbf{s}_{2i} &amp;=&amp; \mbox{rightFootPose}(\mathbf{x}_{2i})\end{eqnarray*}\)</p>
 </li>
 <li>
-<p>for each step</p>
-<div class="ulist">
-<ul>
-<li>
-<p>stay constant for time <code>self.single_support_time</code>,</p>
-</li>
-<li>
-<p>move to next step in time <code>self.double_support_time</code>,</p>
+<p>\(\mathbf{s}_{2N} = \mbox{leftFootPose}(\mathbf{x}_{2N})\)</p>
 </li>
 </ul>
 </div>
-</li>
-<li>
-<p>go from last step to <code>end</code> position in time <code>self.double_support_time</code>.</p>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-it may be helpful to add a constant function after the last segment so that the desired CoP
-remains constant after the end of the motion.
-</td>
-</tr>
-</table>
-</div>
+<div class="paragraph">
+<p>where leftFootPose (respectively rightFootPose) maps \((x,y,\theta)\) to the pose of the left (respectively right) foot when the robot is in pose \((x,y,\theta)\).</p>
 </div>
 <div class="sect2">
-<h3 id="_computation_of_the_trajectory_of_the_center_of_mass">Computation of the trajectory of the center of mass</h3>
+<h3 id="_bézier_curve">Bézier curve</h3>
 <div class="paragraph">
-<p>In file <code>script/com_trajectory.py</code>, method <code>ComTrajectory.compute</code>, compute the trajectory of the
-center of mass by optimal control. The discretized trajectory will be stored in member <code>self.X</code>,
-a <code>numpy.array</code> of size <code>2*self.N</code> composed of the (x,y) values of the center of mass discretized
-and stacked in a single vector.</p>
+<p>The sliding motion of the robot is obtained by minimizing the following cost over the set of  Bézier curves of degree 5 (6 control points)</p>
 </div>
+<div class="stemblock">
+<div class="content">
+\[Cost(B) = \frac{1}{2} \int_0^1 \mathbf{v}_{T}(B(t), \dot{B}(t))^2 + \alpha\ \mathbf{v}_{N}(B(t), \dot{B}(t))^2 dt + \beta\ Cost_{boundary}(B)\]
 </div>
-<div class="sect2">
-<h3 id="_computation_of_the_whole_body_walk_motion">Computation of the whole-body walk motion</h3>
-<div class="paragraph">
-<p>In file <code>script/walking_motion.py</code>, implement class <code>SwingFootTrajectory</code>, methods <code>__init__</code> and
-<code>__call__</code>. The method should define a foot trajectory in such a way that the trajectory starts at
-<code>init</code> at <code>t_init</code> and ends at <code>end</code> at <code>t_end</code>, where <code>init</code> and <code>end</code> are 3-dimensional
-<code>numpy.array</code>.</p>
 </div>
 <div class="paragraph">
-<p>The trajectory should start and end with a zero velocity. The z coordinate of the trajectory should
-start and end with the value provided by <code>init</code> and <code>end</code> (we assume they are the same) and with
-0 velocity at <code>t_init</code> and <code>t_end</code>.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-Use a polynomial of degree 3 for (x,y) and of degree 4 for z.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>In method <code>WalkingMotion.compute</code>,</p>
+<p>where</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>build the trajectory of the left and right feet as a sequence of
-<code>SwingFootTrajectory</code> and <code>Constant</code> instances,</p>
+<p>\(\alpha\) and \(\beta\) are constant real numbers (4 and 100 in the code),</p>
 </li>
 <li>
-<p>compute the trajectory of the center of mass using <code>ComTrajectory</code> class,</p>
+<p>\(\mathbf{v}_{T}(B(t),\dot{B}(t)) = \left((\cos\theta, \sin\theta, 0)|\dot{B}(t)\right)\) is the tangent velocity (along direction \(\theta\)),</p>
 </li>
 <li>
-<p>by inverse kinematics, compute a discretized sequence of robot configurations starting from <code>q0</code>,
-return this sequence.</p>
+<p>\(\mathbf{v}_{N}(B(t),\dot{B}(t)) = \left((-\sin\theta, \cos\theta, 0)|\dot{B}(t)\right)\) is the normal velocity (along direction \(\theta + \frac{\pi}{2}\)),</p>
+</li>
+<li>
+<p>\(Cost_{boundary}(B) = \left((-\sin\theta(0),\cos\theta(0),0)|\dot{B}(0)\right) + \left((-\sin\theta(1),\cos\theta(1),0)|\dot{B}(1)\right)\) is a cost that enforces that the velocity in the plane is oriented along the direction of \(\theta\) at at 0 and 1.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Implement your solution in file bezier.py.</p>
 </div>
 </div>
 </div>
@@ -597,8 +532,32 @@ return this sequence.</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-02-14 11:05:26 +0100
+Last updated 2024-02-14 16:53:51 +0100
 </div>
 </div>
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  messageStyle: "none",
+  tex2jax: {
+    inlineMath: [["\\(", "\\)"]],
+    displayMath: [["\\[", "\\]"]],
+    ignoreClass: "nostem|nolatexmath"
+  },
+  asciimath2jax: {
+    delimiters: [["\\$", "\\$"]],
+    ignoreClass: "nostem|noasciimath"
+  },
+  TeX: { equationNumbers: { autoNumber: "none" } }
+})
+MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
+  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
+    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
+      data.math.root.display = "block"
+    }
+    return data
+  })
+})
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_HTMLorMML"></script>
 </body>
 </html>

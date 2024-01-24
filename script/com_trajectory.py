@@ -35,7 +35,6 @@ from cop_des import CoPDes
 class ComTrajectory(object):
     # time discretization step
     delta_t = 1e-2
-    alpha = 0
     g = 9.81
     N = -1
     # Constructor

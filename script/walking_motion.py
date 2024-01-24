@@ -25,6 +25,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import time
+import numpy as np
+from math import atan2, cos, sin
 from pinocchio import centerOfMass, forwardKinematics
 from cop_des import CoPDes
 from com_trajectory import ComTrajectory
@@ -55,7 +57,9 @@ class SwingFootTrajectory(object):
 #
 # Input data are
 #  - an initial configuration of the robot,
-#  - a sequence of step positions (x,y) on the ground
+#  - a sequence of step positions (x,y,theta) on the ground,
+#  - a mapping from time to R corresponding to the desired orientation of the
+#    waist. If not provided, keep constant orientation.
 #
 class WalkingMotion(object):
     step_height = 0.05
@@ -63,11 +67,13 @@ class WalkingMotion(object):
     def __init__(self, robot):
         self.robot = robot
 
-    def compute(self, q0, steps):
+    def compute(self, q0, steps, waistOrientation = None):
         # Test input data
         if len(steps) < 4:
             raise RuntimeError("sequence of step should be of length at least 4 instead of " +
                                f"{len(steps)}")
+        # Copy steps in order to avoid modifying the input list.
+        steps_ = steps[:]
         # Compute offset between waist and center of mass since we control the center of mass
         # indirectly by controlling the waist.
         data = self.robot.model.createData()
@@ -105,12 +111,12 @@ if __name__ == "__main__":
     wm = WalkingMotion(robot)
     # First two values correspond to initial position of feet
     # Last two values correspond to final position of feet
-    steps = [np.array([0, -.1]), np.array([0.4, .1]),
-             np.array([.8, -.1]), np.array([1.2, .1]),
-             np.array([1.6, -.1]), np.array([1.6, .1])]
+    steps = [np.array([0, -.1, 0.]), np.array([0.4, .1, 0.]),
+             np.array([.8, -.1, 0.]), np.array([1.2, .1, 0.]),
+             np.array([1.6, -.1, 0.]), np.array([1.6, .1, 0.])]
     configs = wm.compute(q, steps)
     for q in configs:
-        time.sleep(1e-1)
+        time.sleep(1e-2)
         robot.display(q)
     delta_t = wm.com_trajectory.delta_t
     times = delta_t*np.arange(wm.com_trajectory.N+1)

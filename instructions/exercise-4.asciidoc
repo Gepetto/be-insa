@@ -1,0 +1,48 @@
+:stem: latexmath
+
+# Computing the sequence of steps
+
+## Objective
+
+Automatically compute the sequence of steps to reach a given configuration.
+
+## Exercise 4
+
+The input of the walk motion is now a desired pose of the feet and position of the center of mass defined by a point and an orientation: stem:[(x_{2n},y_{2N},\theta_{2N})] in the figure.
+
+To compute the sequence of steps, we are going to define a sliding motion of the robot in the plane as a Bézier curve stem:[B] in stem:[\mathbb{R}^3], then we are going to discretize this sliding motion into a sequence of stem:[2N] times stem:[t_i], stem:[i\leq 2N].
+
+image::figures/steps.png[width="100%,alt="sequence of steps"]
+
+The sequence of steps to compute is then represented by a sequence:
+
+[stem]
+++++
+\mathbf{x}_i= (x_i,y_i,\theta_i) = B(t_i)
+++++
+
+for stem:[i] between stem:[1] and stem:[2N]. stem:[i=0] corresponds to the initial pose of the feet and stem:[2N] to the final pose.
+
+From sequence stem:[\mathbf{x}_i], we extract the sequence of steps as follows:
+
+* stem:[\mathbf{s}_0 = \mbox{rightFootPose}(\mathbf{x}_0)]
+* for stem:[i] such that stem:[1 \leq i \leq N], stem:[\begin{eqnarray*}\mathbf{s}_{2i-1} &=& \mbox{leftFootPose}(\mathbf{x}_{2i-1})\\ \mathbf{s}_{2i} &=& \mbox{rightFootPose}(\mathbf{x}_{2i})\end{eqnarray*}]
+* stem:[\mathbf{s}_{2N} = \mbox{leftFootPose}(\mathbf{x}_{2N})]
+
+where +leftFootPose+ (respectively +rightFootPose+) maps stem:[(x,y,\theta)] to the pose of the left (respectively right) foot when the robot is in pose stem:[(x,y,\theta)].
+
+### Bézier curve
+
+The sliding motion of the robot is obtained by minimizing the following cost over the set of  Bézier curves of degree 5 (6 control points)
+[stem]
+++++
+Cost(B) = \frac{1}{2} \int_0^1 \mathbf{v}_{T}(B(t), \dot{B}(t))^2 + \alpha\ \mathbf{v}_{N}(B(t), \dot{B}(t))^2 dt + \beta\ Cost_{boundary}(B)
+++++
+where
+
+* stem:[\alpha] and stem:[\beta] are constant real numbers (4 and 100 in the code),
+* stem:[\mathbf{v}_{T}(B(t),\dot{B}(t)) = \left((\cos\theta, \sin\theta, 0)|\dot{B}(t)\right)] is the tangent velocity (along direction stem:[\theta]),
+* stem:[\mathbf{v}_{N}(B(t),\dot{B}(t)) = \left((-\sin\theta, \cos\theta, 0)|\dot{B}(t)\right)] is the normal velocity (along direction stem:[\theta + \frac{\pi}{2}]),
+* stem:[Cost_{boundary}(B) = \left((-\sin\theta(0),\cos\theta(0),0)|\dot{B}(0)\right) + \left((-\sin\theta(1),\cos\theta(1),0)|\dot{B}(1)\right)] is a cost that enforces that the velocity in the plane is oriented along the direction of stem:[\theta] at at 0 and 1.
+
+Implement your solution in file +bezier.py+.
