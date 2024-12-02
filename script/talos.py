@@ -39,9 +39,9 @@ from pinocchio.visualize import GepettoVisualizer
 
 class Robot(object):
     # Paths to the model of the robot
-    model_dir = "talos_data"
-    mesh_dir = "talos_data/meshes"
-    urdf_model_path = "talos_data/robots/talos_reduced.urdf"
+    model_dir = "./talos_data"
+    mesh_dir = "./talos_data/meshes"
+    urdf_model_path = "./talos_data/robots/talos_reduced.urdf"
 
     def __init__(self):
         self.model, self.collision_model, self.visual_model = \
