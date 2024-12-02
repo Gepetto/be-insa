@@ -21,3 +21,7 @@ Anaconda
     - gepetto-viewer-corba,
     - numpy, scipy,
     - matplotlib
+
+conda config --add channels conda-forge
+conda create --name pinocchio
+conda install -n pinocchio pinocchio gepetto-viewer-corba numpy scipy matplotlib
