@@ -48,7 +48,7 @@ if __name__ == "__main__":
     steps = [np.array([0, -.1]), np.array([0.4, .1]),
              np.array([.8, -.1]), np.array([1.2, .1]),
              np.array([1.6, -.1]), np.array([1.6, .1])]
-    end = np.array([1.2,0.])
+    end = np.array([1.6,0.])
     cop_des = CoPDes(start, steps, end)
     times = 0.01 * np.arange(500)
     cop = np.array(list(map(cop_des, times)))
