@@ -37,6 +37,8 @@ class Piecewise(object):
 
     # Evaluation of the function with operator()
     def __call__(self, t):
+        if len(self.segments) == 0:
+            raise RuntimeError('This "Piecewise" instance is empty.')
         for s in self.segments:
             if t <= s.t_end: break
         return s(t)
