@@ -40,7 +40,7 @@ Cost(B) = \frac{1}{2} \int_0^1 \mathbf{v}_{T}(B(t), \dot{B}(t))^2 + \alpha\ \mat
 ++++
 where
 
-* stem:[\alpha] and stem:[\beta] are constant real numbers (4 and 100 in the code),
+* stem:[\alpha] and stem:[\beta] are constant real numbers (8 and 100 in the code),
 * stem:[\mathbf{v}_{T}(B(t),\dot{B}(t)) = \left((\cos\theta, \sin\theta, 0)|\dot{B}(t)\right)] is the tangent velocity (along direction stem:[\theta]),
 * stem:[\mathbf{v}_{N}(B(t),\dot{B}(t)) = \left((-\sin\theta, \cos\theta, 0)|\dot{B}(t)\right)] is the normal velocity (along direction stem:[\theta + \frac{\pi}{2}]),
 * stem:[Cost_{boundary}(B) = \left((-\sin\theta(0),\cos\theta(0),0)|\dot{B}(0)\right) + \left((-\sin\theta(1),\cos\theta(1),0)|\dot{B}(1)\right)] is a cost that enforces that the velocity in the plane is oriented along the direction of stem:[\theta] at at 0 and 1.
