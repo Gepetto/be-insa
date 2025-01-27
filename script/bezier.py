@@ -134,10 +134,18 @@ class SlidingMotion(object):
         """
 
     def leftFootPose(self, pose):
+        """
+        Compute the desired pose of the left foot given the values (x,y,theta)
+        contained in the input np.array pose.
+        """
         res = np.zeros(3)
         return res
 
     def rightFootPose(self, pose):
+        """
+        Compute the desired pose of the right foot given the values (x,y,theta)
+        contained in the input np.array pose.
+        """
         res = np.zeros(3)
         return res
 
