@@ -124,8 +124,8 @@ class SlidingMotion(object):
     def boundaryConstraints(self, X):
         """
         Computes the scalar product of the x-y velocity at the beginning 
-        (resp. at the end) of the trajectory with the unit vector of initial
-        (resp. end) orientation.
+        (resp. at the end) of the trajectory with the unit vector normal to
+        the initial (resp. end) orientation.
         """
 
     def solve(self):
